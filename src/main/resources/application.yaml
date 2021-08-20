@@ -1,0 +1,31 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: header_route
+          uri: lb://example
+          predicates:
+            - Path=/**
+          filters:
+            - ChangeRouteUriFromHeader=route
+            - name: PathControl
+              args:
+                path: /actuator
+                headerName: acl
+                headerValue: 999
+                errorCode: 403
+    discovery:
+      enabled: true
+      client:
+        simple:
+          instances:
+            example:
+              - instanceId: d1
+                serviceId: example
+                uri: https://example.org
+            test:
+              - instanceId: d2
+                serviceId: test
+                uri: https://baidu.com
+  application:
+    name: demo-gateway
